@@ -15,20 +15,19 @@ app.get('/', (req, res) => {
 
 app.get('/restaurants', (req, res) => {
   const keyword = req.query.keyword?.trim()
-  const matchedRestaurants = keyword ? restaurants.filter(restaurant => 
-    Object.values(restaurant).some(property => {
-      if (typeof property === 'string') {
-      return property.toLowerCase().includes(keyword.toLowerCase())
-    } else {
-      return false
-    }})) : restaurants
-  res.render('index', {restaurants: matchedRestaurants, keyword})
+  const matchedRestaurants = keyword ? restaurants.filter (restaurant => {
+    return restaurant.name.toLowerCase().includes( keyword.toLowerCase()) || restaurant.category.includes(keyword)
+  }) :restaurants
+  if (matchedRestaurants.length === 0){
+    res.render('empty', {keyword})
+  }
+  res.render('index', { restaurants: matchedRestaurants, keyword })
 })
 
 app.get('/restaurants/:id', (req, res) => {
   const id = req.params.id
   const restaurant = restaurants.find(restaurant => restaurant.id.toString() === id)
-  res.render('show', {restaurant})
+  res.render('show', { restaurant })
 })
 
 app.listen(port, () => {
